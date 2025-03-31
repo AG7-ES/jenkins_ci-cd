@@ -5,7 +5,7 @@ cast:
       replicas: 3
       container:
          name: cast
-         image: cast_service
+         image: ag7es/cast_service:latest
          imagePullPolicy: IfNotPresent
          port: 8000
          command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
@@ -98,7 +98,7 @@ movie:
       replicas: 3
       container:
          name: movie
-         image: movie_service:latest
+         image: ag7es/movie_service:latest
          imagePullPolicy: IfNotPresent
          port: 8000
          command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
