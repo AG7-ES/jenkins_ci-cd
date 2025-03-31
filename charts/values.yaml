@@ -1,4 +1,4 @@
-namepace: standard
+namepace: default
 
 cast:
   replicaCount: 1
