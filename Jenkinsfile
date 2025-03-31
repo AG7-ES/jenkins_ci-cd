@@ -18,13 +18,13 @@ pipeline {
                 script {
                     sh '''
                     docker rm -f jenkins
-                    docker build -t $CAST_IMAGE_NAME ./cast-service"
+                    docker build -t $CAST_IMAGE_NAME ./cast-service
                     sleep 6
                     '''
                 }
                 script {
                     sh '''
-                    docker build -t $MOVIE_IMAGE_NAME ./movie-service"
+                    docker build -t $MOVIE_IMAGE_NAME ./movie-service
                     sleep 6
                     '''
                 }
