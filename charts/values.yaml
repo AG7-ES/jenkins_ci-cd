@@ -1,210 +1,29 @@
+namepace: standard
+
 cast:
-   deployment:
-      name: cast-deployment
-      app: cast
-      replicas: 3
-      container:
-         name: cast
-         image: ag7es/cast_service:v.1.0
-         imagePullPolicy: IfNotPresent
-         port: 8000
-         command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
-         volumeMounts:
-           mountPath: /app/
-           name: postgres-cast
-         env:
-           name: DATABASE_URI
-           value: postgresql://cast_db_username:cast_db_password@cast_db/cast_db_dev
-      volumes:
-        path: ./cast-service/
-        name: postgres-cast
+  replicaCount: 1
+  image:
+    repository: ag7es/cast-image
+    tag: v.1.0
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8000
+  postgres:
+    user: Y2FzdF9kYl91c2VybmFtZQ==
+    password: Y2FzdF9kYl9wYXNzd29yZA==
+    db: Y2FzdF9kYl9kZXY=
 
-   service:
-      name: cast-service
-      app: cast
-      port: 8002
-      targetPort: 8000
-
-   ingress:
-      name: cast-ingress
-      clusterIssuer: letsencrypt-prod
-      ingressClassName: traefik
-      secretName: rancher-secret
-      hostname: app.ag7-es.ip-ddns.com
-      path: /
-      pathType: Prefix
-      serviceName: cast-service
-      port: 8002
-
-   hpa:
-      name: cast-hpa
-      scaleTargetRef:
-         apiVersion: apps/v1
-         kind: Deployment
-         name: cast-deployment
-      minReplicas: 3
-      maxReplicas: 6
-      targetCPU: 70
-
-castPostgres:
-   statefulset:
-      name: cast-postgresql
-      label: cast-postgres
-      serviceName: cast-db
-      spec:
-         serviceName: cast-db
-         replicas: 1
-         app: db
-      container:
-            image: docker.io/postgres:12.1-alpine
-            name: cast-db
-            port: 5432
-      env:
-         user:
-            nameKey : POSTGRES_USER
-         password:
-            nameKey: POSTGRES_PASSWORD
-         dbName: 
-            nameKey: POSTGRES_DB
-      volumeMounts:
-         mountPath: /var/lib/postgresql/data/
-      volumes:
-         name: postgres-cast
-         pvcName: postgres-cast-pvc
-
-   service:
-      nameApp: cast-db
-      port: 5432
-      targetPort: 5432
-      clusterIP: None
-
-   secret: 
-      name: cast-db-credentials
-      type: Opaque
-      user: Y2FzdF9kYl91c2VybmFtZQ==
-      password: Y2FzdF9kYl9wYXNzd29yZA==
-      db: Y2FzdF9kYl9kZXY=
-
-   pvc:
-      name: postgres-cast-pvc
-      accessMode: ReadWriteOnce
-      storageClassName: local-path
-      storage: 10Gi
-   
 movie:
-   deployment:
-      name: movie-deployment
-      app: movie
-      replicas: 3
-      container:
-         name: movie
-         image: ag7es/movie_service:v.1.0
-         imagePullPolicy: IfNotPresent
-         port: 8000
-         command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
-         volumeMounts:
-           mountPath: /app/
-           name: postgres-movie
-         env:
-           dbName: DATABASE_URI
-           dbValue: postgresql://movie_db_username:movie_db_password@movie_db/movie_db_dev
-           castName: CAST_SERVICE_HOST_URL
-           castValue: http://cast_service:8000/api/v1/casts/
-      volumes:
-        path: ./movie-service/
-        name: postgres-movie
-
-   service:
-      name: movie-service
-      app: movie
-      port: 8001
-      targetPort: 8000
-
-   ingress:
-      name: movie-ingress
-      clusterIssuer: letsencrypt-prod
-      ingressClassName: traefik
-      secretName: rancher-secret
-      hostname: app.ag7-es.ip-ddns.com
-      path: /
-      pathType: Prefix
-      serviceName: movie-service
-      port: 8001
-
-   hpa:
-      name: movie-hpa
-      scaleTargetRef:
-         apiVersion: apps/v1
-         kind: Deployment
-         name: movie-deployment
-      minReplicas: 3
-      maxReplicas: 6
-      targetCPU: 70
-
-
-moviePostgres:
-   statefulset:
-      name: movie-postgresql
-      label: movie-postgres
-      serviceName: movie-db
-      spec:
-         serviceName: movie-db
-         replicas: 1
-         app: movie-db
-      container:
-         image: docker.io/postgres:12.1-alpine
-         name: movie-db
-         port: 5432
-      env:
-         user:
-            nameKey : POSTGRES_USER
-         password:
-            nameKey: POSTGRES_PASSWORD
-         dbName: 
-            nameKey: POSTGRES_DB
-      volumeMounts:
-         mountPath: /var/lib/postgresql/data/
-      volumes:
-         name: postgres-movie
-         pvcName: postgres-movie-pvc
-
-   service:
-      nameApp: movie-db
-      port: 5432
-      targetPort: 5432
-      clusterIP: None
-
-   secret: 
-      name: movie-db-credentials
-      type: Opaque
-      user: bW92aWVfZGJfdXNlcm5hbWU=
-      password: bW92aWVfZGJfcGFzc3dvcmQ=
-      db: bW92aWVfZGJfZGV2
-
-   pvc:
-      name: postgres-movie-pvc
-      accessMode: ReadWriteOnce
-      storageClassName: local-path
-      storage: 10Gi
-
-nginx:
-   deployment:
-      name: nginx-deployment
-      app: nginx
-      replicas: 3
-      container:
-         name: nginx
-         image: docker.io/nginx:latest
-         imagePullPolicy: IfNotPresent
-         port: 8080
-         mountPath: /etc/nginx/conf.d/default.conf
-         volumeMountName: config
-      volumes:
-         name: config
-         path: /home/ubuntu/jenkins_ci-cd/nginx_config.conf
-
-   service:
-      name: nginx-service
-      app: nginx
-      port: 8080
-      targetPort: 8080
+  replicaCount: 1
+  image:
+    repository: ag7es/movie-image
+    tag: v.1.0
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 8000
+  postgres:
+    user: bW92aWVfZGJfdXNlcm5hbWU=
+    password: bW92aWVfZGJfcGFzc3dvcmQ=
+    db: bW92aWVfZGJfZGV2
