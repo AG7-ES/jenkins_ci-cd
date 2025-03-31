@@ -130,11 +130,11 @@ def deployToK3s(String namespace) {
         rm -Rf .kube
         mkdir .kube
         ls
-        cat $KUBECONFIG > .kube/config
+        cat \$KUBECONFIG > .kube/config
         cp charts/values.yaml values.yaml
         cat values.yaml
-        sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yaml
-        helm upgrade --install app charts --values=values.yaml --namespace ${namespace}
+        sed -i "s+tag.*+tag: \${DOCKER_TAG}+g" values.yaml
+        helm upgrade --install app charts --values=values.yaml --namespace \${namespace}
         '''
     }
 }
