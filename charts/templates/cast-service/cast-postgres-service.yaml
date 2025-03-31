@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.castPostgres.service.nameApp }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.castPostgres.service.nameApp }}
+spec:
+  selector:
+    app: {{ .Values.castPostgres.service.nameApp }}
+  ports:
+  - name: {{ .Values.castPostgres.service.nameApp }}
+    port: {{ .Values.castPostgres.service.port }}
+    targetPort: {{ .Values.castPostgres.service.targetPort }}
+  clusterIP: {{ .Values.castPostgres.service.clusterIP }}

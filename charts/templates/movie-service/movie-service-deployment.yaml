@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.movie.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.movie.deployment.app }}
+spec:
+  replicas: {{ .Values.movie.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.movie.deployment.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.movie.deployment.app }}
+    spec:
+      containers:
+        - name: {{ .Values.movie.deployment.container.name }}
+          image: {{ .Values.movie.deployment.container.image }}
+          imagePullPolicy: {{ .Values.movie.deployment.container.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.movie.deployment.container.port }}
+          command: {{ .Values.movie.deployment.container.command }}
+          env:
+            - name: {{ .Values.movie.deployment.container.env.dbName }}
+              value: {{ .Values.movie.deployment.container.env.dbValue }}
+            - name: {{ .Values.movie.deployment.container.env.castName }}
+              value: {{ .Values.movie.deployment.container.env.castValue }}
+
+          volumeMounts:
+            - mountPath: {{ .Values.movie.deployment.container.volumeMounts.mountPath }}
+              name: {{ .Values.movie.deployment.container.volumeMounts.name }}
+      volumes:
+        - name: {{ .Values.movie.deployment.volumes.name }}
+          hostPath:
+            path: {{ .Values.movie.deployment.volumes.path }}

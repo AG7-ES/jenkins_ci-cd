@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.movie.ingress.name }}
+  namespace: {{ .Values.namespace }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.movie.ingress.clusterIssuer }}
+spec: 
+  ingressClassName: {{ .Values.movie.ingress.ingressClassName }}
+  tls:
+    - secretName: {{ .Values.movie.ingress.secretName }}
+      hosts:
+        - {{ .Values.movie.ingress.hostname }}
+
+  rules:
+  - host: {{ .Values.movie.ingress.hostname }}
+    http:
+      paths:
+        - path: {{ .Values.movie.ingress.path }}
+          pathType: {{ .Values.movie.ingress.pathType }}
+          backend:
+             service:
+              name: {{ .Values.movie.ingress.serviceName }}
+              port:
+                number: {{ .Values.movie.ingress.port }}
