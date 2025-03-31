@@ -126,7 +126,7 @@ pipeline {
 
 def deployToK3s(String namespace) {
     withCredentials([file(credentialsId: 'config', variable: 'KUBECONFIG')]) {
-        sh '''
+        sh """
         rm -Rf .kube
         mkdir .kube
         ls
@@ -135,6 +135,6 @@ def deployToK3s(String namespace) {
         cat values.yaml
         sed -i "s+tag.*+tag: \${DOCKER_TAG}+g" values.yaml
         helm upgrade --install app charts --values=values.yaml --namespace \${namespace}
-        '''
+        """
     }
 }
