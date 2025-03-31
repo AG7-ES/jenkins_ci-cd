@@ -134,7 +134,7 @@ def deployToK3s(String namespace) {
         cp charts/values.yaml values.yaml
         cat values.yaml
         sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yaml
-        helm upgrade --install app charts --values=values.yaml --namespace ${namespace} --create-namespace
+        helm upgrade --install app charts --values=values.yaml --namespace ${namespace}
         '''
     }
 }
