@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: movie-postgres-statefulset
+  name: cast-postgres-statefulset
   namespace: {{ .Values.namespace }}
 spec:
-  serviceName: "movie-db"
+  serviceName: "cast-db"
   selector:
     matchLabels:
-      app: movie-db
+      app: cast-db
   template:
     metadata:
       labels:
-        app: movie-db
+        app: cast-db
     spec:
       containers:
-      - name: postgres
+      - name: cast-postgres
         image: postgres:12.1-alpine
         ports:
         - containerPort: 5432
@@ -22,30 +22,30 @@ spec:
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
-              name: movie-postgres-secret
+              name: cast-postgres-secret
               key: POSTGRES_USER
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: movie-postgres-secret
+              name: cast-postgres-secret
               key: POSTGRES_PASSWORD
         - name: POSTGRES_DB
           valueFrom:
             secretKeyRef:
-              name: movie-postgres-secret
+              name: cast-postgres-secret
               key: POSTGRES_DB
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
         volumeMounts:
-        - name: movie-postgres-storage
+        - name: cast-postgres-storage
           mountPath: /var/lib/postgresql/data
   volumeClaimTemplates:
   - metadata:
-      name: movie-postgres-storage
+      name: cast-postgres-storage
     spec:
       accessModes:
         - ReadWriteOnce
       resources:
         requests:
-          storage: 1Gi
+          storage: 10Gi
       storageClassName: local-path

@@ -2,7 +2,7 @@ cast:
   replicaCount: 1
   image:
     repository: ag7es/cast-image
-    tag: v.1.0
+    tag: v.15.0
   service:
     type: ClusterIP
     port: 80
@@ -16,7 +16,7 @@ movie:
   replicaCount: 1
   image:
     repository: ag7es/movie-image
-    tag: v.1.0
+    tag: v.15.0
   service:
     type: ClusterIP
     port: 80

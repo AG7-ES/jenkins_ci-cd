@@ -14,9 +14,9 @@ spec:
         app: movie-service
     spec:
       initContainers: 
-        - name: wait-for-db
+        - name: db-init
           image: postgres:12.1-alpine
-          command: ['sh', '-c', 'until pg_isready -h movie-db -p 5432 -U $(POSTGRES_USER); do echo waiting for postgres; sleep 2; done;']
+          command: ['sh', '-c', 'until pg_isready -h movie-db -p 5432 -U $(POSTGRES_USER); do echo database initializing; sleep 4; done;']
           env:
             - name: POSTGRES_USER
               valueFrom:

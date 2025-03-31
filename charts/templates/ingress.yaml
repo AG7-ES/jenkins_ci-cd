@@ -1,9 +1,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: cast-ingress
+  name: app-ingress
   namespace: {{ .Values.namespace }}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
+  ingressClassName: traefik
+  tls:
+    - secretName: rancher-secret
+      hosts:
+        - app.ag7-es.ip-ddns.com
+
   rules:
   - host: app.ag7-es.ip-ddns.com
     http:
@@ -19,6 +27,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: movie-service 
+            name: movie-service
             port:
               number: 80
