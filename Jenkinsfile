@@ -79,19 +79,58 @@ pipeline {
 
         stage('Deploy to Dev') {
             steps {
-                script { deployToK3s('dev') }
+                script {
+                    withCredentials([file(credentialsId: 'config', variable: 'KUBECONFIG')]) {
+                        sh '''
+                        rm -Rf .kube
+                        mkdir .kube
+                        ls
+                        cat $KUBECONFIG > .kube/config
+                        cp charts/values.yaml values.yaml
+                        cat values.yaml
+                        sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yaml
+                        helm upgrade --install app charts --values=values.yaml --namespace dev
+                        '''
+                    }
+                }
             }
         }
 
         stage('Deploy to QA') {
             steps {
-                script { deployToK3s('qa') }
+                script {
+                    withCredentials([file(credentialsId: 'config', variable: 'KUBECONFIG')]) {
+                        sh '''
+                        rm -Rf .kube
+                        mkdir .kube
+                        ls
+                        cat $KUBECONFIG > .kube/config
+                        cp charts/values.yaml values.yaml
+                        cat values.yaml
+                        sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yaml
+                        helm upgrade --install app charts --values=values.yaml --namespace qa
+                        '''
+                    }
+                }
             }
         }
 
         stage('Deploy to Staging') {
             steps {
-                script { deployToK3s('staging') }
+                script {
+                    withCredentials([file(credentialsId: 'config', variable: 'KUBECONFIG')]) {
+                        sh '''
+                        rm -Rf .kube
+                        mkdir .kube
+                        ls
+                        cat $KUBECONFIG > .kube/config
+                        cp charts/values.yaml values.yaml
+                        cat values.yaml
+                        sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yaml
+                        helm upgrade --install app charts --values=values.yaml --namespace staging
+                        '''
+                    }
+                }
             }
         }
 
@@ -108,7 +147,18 @@ pipeline {
                                 parameters: [choice(name: 'Deploy', choices: 'Yes\nAbort', description: 'Select Yes to continue or Abort to stop')]
                             )
                             if (userInput == 'Yes') {
-                                deployToK3s('prod')
+                                withCredentials([file(credentialsId: 'config', variable: 'KUBECONFIG')]) {
+                                    sh '''
+                                    rm -Rf .kube
+                                    mkdir .kube
+                                    ls
+                                    cat $KUBECONFIG > .kube/config
+                                    cp charts/values.yaml values.yaml
+                                    cat values.yaml
+                                    sed -i "s+tag.*+tag: ${DOCKER_TAG}+g" values.yaml
+                                    helm upgrade --install app charts --values=values.yaml --namespace prod
+                                    '''
+                                }
                             } else {
                                 error "Deployment aborted by admin!"
                             }
@@ -121,20 +171,5 @@ pipeline {
         }
 
 
-    }
-}
-
-def deployToK3s(String namespace) {
-    withCredentials([file(credentialsId: 'config', variable: 'KUBECONFIG')]) {
-        sh """
-        rm -Rf .kube
-        mkdir .kube
-        ls
-        cat \$KUBECONFIG > .kube/config
-        cp charts/values.yaml values.yaml
-        cat values.yaml
-        sed -i "s+tag.*+tag: \${DOCKER_TAG}+g" values.yaml
-        helm upgrade --install app charts --values=values.yaml -n \${namespace}
-        """
     }
 }
