@@ -1,5 +1,3 @@
-namepace: default
-
 cast:
   replicaCount: 1
   image:
