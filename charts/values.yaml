@@ -6,7 +6,7 @@ cast:
       container:
          name: cast
          image: cast_service
-         imagePullPolicy: Never
+         imagePullPolicy: IfNotPresent
          port: 8000
          command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
          volumeMounts:
@@ -99,7 +99,7 @@ movie:
       container:
          name: movie
          image: movie_service:latest
-         imagePullPolicy: Never
+         imagePullPolicy: IfNotPresent
          port: 8000
          command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
          volumeMounts:
